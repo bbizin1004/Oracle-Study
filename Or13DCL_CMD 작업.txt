@@ -1,0 +1,178 @@
+Microsoft Windows [Version 10.0.19045.3996]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\TJ>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 목 2월 1 14:49:30 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: study
+비밀번호 입력:
+마지막 성공한 로그인 시간: 목 2월  01 2024 10:01:01 +09:00
+
+다음에 접속됨:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> exit
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0에서 분리되었습니다.
+
+C:\Users\TJ>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 목 2월 1 14:49:58 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: test_user1
+비밀번호 입력:
+ERROR:
+ORA-01045: 사용자 TEST_USER1는 CREATE SESSION 권한을 가지고있지 않음; 로그온이
+거절되었습니다
+
+
+사용자명 입력: test_user1
+비밀번호 입력:
+
+다음에 접속됨:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> create table tb(
+  2  idx number primary key
+  3  );
+create table tb(
+*
+1행에 오류:
+ORA-01031: 권한이 불충분합니다
+
+
+SQL> create table tb(
+  2  idx number primary key
+  3  );
+
+테이블이 생성되었습니다.
+
+SQL> desc tb;
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ IDX                                       NOT NULL NUMBER
+
+SQL> desc tb;
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ IDX                                       NOT NULL NUMBER
+
+SQL> quit
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0에서 분리되었습니다.
+
+C:\Users\TJ>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 목 2월 1 15:02:35 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: test_user1
+비밀번호 입력:
+ERROR:
+ORA-01017: 사용자명/비밀번호가 부적합, 로그온할 수 없습니다.
+
+
+사용자명 입력: test_user1
+비밀번호 입력:
+마지막 성공한 로그인 시간: 목 2월  01 2024 14:55:30 +09:00
+
+다음에 접속됨:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> conn
+사용자명 입력: test_user2
+비밀번호 입력:
+연결되었습니다.
+SQL> create table tb(
+  2  idx number primary key
+  3  );
+
+테이블이 생성되었습니다.
+
+SQL> exit
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0에서 분리되었습니다.
+
+C:\Users\TJ>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 목 2월 1 15:36:55 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: test_user3
+비밀번호 입력:
+ERROR:
+ORA-01045: 사용자 TEST_USER3는 CREATE SESSION 권한을 가지고있지 않음; 로그온이
+거절되었습니다
+
+
+사용자명 입력: test_user1
+비밀번호 입력:
+ERROR:
+ORA-01045: 사용자 TEST_USER1는 CREATE SESSION 권한을 가지고있지 않음; 로그온이
+거절되었습니다
+
+
+사용자명 입력: test_user1
+비밀번호 입력:
+ERROR:
+ORA-01017: 사용자명/비밀번호가 부적합, 로그온할 수 없습니다.
+
+
+SP2-0157: 3회 시도후 ORACLE에 CONNECT 하지못하고 SQL*Plus을 종료했습니다.
+
+C:\Users\TJ>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 목 2월 1 15:45:16 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: test_user2
+비밀번호 입력:
+마지막 성공한 로그인 시간: 목 2월  01 2024 15:13:37 +09:00
+
+다음에 접속됨:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> select * from tab;
+
+TNAME
+--------------------------------------------------------------------------------
+TABTYPE                     CLUSTERID
+-------------------------- ----------
+TB
+TABLE
+
+
+SQL> desc tb;
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ IDX                                       NOT NULL NUMBER
+
+SQL> insert into tb values (1);
+insert into tb values (1)
+            *
+1행에 오류:
+ORA-01950: 테이블스페이스 'USERS'에 대한 권한이 없습니다.
+
+
+SQL> insert into tb values (1);
+
+1 개의 행이 만들어졌습니다.
+
+SQL>
