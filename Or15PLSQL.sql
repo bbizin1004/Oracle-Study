@@ -147,6 +147,166 @@ begin
 end;
 /
 
+set serveroutput on;
+
+--예제5] 복합변수
+/*
+class를 정의하듯 필요한 자료형을 묶어 하나의 자료형을 만든후 
+생성하는 변수를 말한다.
+형식] type 복합변수자료형 is recode( 
+        컬럼명1 자료형(크기),
+        컬럼명2  테이블명.컬럼명%type
+    );
     
+*/
+/*
+시나리오] 사원번호, 이름(first_name+last_name), 담당업무명을 저장할 수 있는 
+복합변수를 선언한 후, 100번 사원의 정보를 출력하는 PL/SQL을 작성하시오.
+*/
+-- 조건에 맞는 쿼리문 생성
+select employee_id, first_name || ' ' || last_name, job_id
+from employees where employee_id=100;
+
+declare
+    --3개의 값을 저장할 수 있는 복합변수 자료형을 선언한다.
+    type emp_3type is record(
+        /*사원 테이블의 컬럼을 참조하는 참조변수로 선언*/
+        emp_id employees.employee_id%type,
+        /*일반 변수로 선언*/
+        emp_name varchar2(55),
+        emp_job employees.job_id%type
+    );
+    /*앞에서 선언한 복합변수 자료형을 통해 변수를 선언한다. 해당 복합변수를 통해 3개의
+    값을 저장할 수 있다.*/
+    record3 emp_3type;
+begin
+    --select절에서 인출한 3개의 값을 복합변수에 저장한다.
+    select employee_id, first_name|| ' ' || last_name, job_id
+        into record3
+    from employees where employee_id=100;
+    --결과를 출력한다.
+    dbms_output.put_line(record3.emp_id|| ' ' ||
+                        record3.emp_name|| ' ' ||
+                        record3.emp_job);
+end;
+/
+
+
+/*
+연습문제] 아래 절차에 따라 PL/SQL문을 작성하시오.
+1.복합변수생성
+- 참조테이블 : employees
+- 복합변수자료형의 이름 : empTypes
+        멤버1 : emp_id -> 사원번호
+        멤버2 : emp_name -> 사원의전체이름(이름+성)
+        멤버3 : emp_salary -> 급여
+        멤버4 : emp_percent -> 보너스율
+위에서 생성한 자료형을 이용하여 복합변수 rec2를 생성후 사원번호 108번의 정보를 할당한다.
+2.1의 내용을 출력한다.
+
+3.위 내용을 완료한후 치환연산자를 사용하여 사원번호를 사용자로부터 입력받은 후
+해당 사원의 정보를 출력할수있도록 수정하시오.[보류]
+*/
+
+
+select employee_id, first_name|| ' ' ||last_name, salary,nvl(commission_pct,0)
+from employees where employee_id=108;
+
+declare 
+    --4개의 멤버를 가진 복합변수 자료형을 선언한다.
+    type empTypes is record(
+        emp_id employees.employee_id%type,
+        emp_name varchar2(50),
+        emp_salary employees.salary%type,
+        emp_percent employees.commission_pct%type
+    );
+    --복합변수 자료형을 통해 변수를 생성한다.
+        rec2 empTypes;
+begin
+   select employee_id, first_name|| ' ' ||last_name, 
+   salary,nvl(commission_pct,0) into rec2
+from employees where employee_id=108;
+
+        dbms_output.put_line(rec2.emp_id|| ' ' ||
+                        rec2.emp_name|| ' ' ||
+                        rec2.emp_salary|| ' ' ||
+                        rec2.emp_percent);
+end;
+/
+
+/*
+치환연산자: PL/SQL에서 사용자로부터 입력받을때 사용하는 연산자로
+    변수앞에 &를 붙여주면 된다. 실행시 입력창이 뜬다.
+*/
+--앞에서 작성했던 연습문제에 치환연산자를 적용한다.
+declare 
+    --4개의 멤버를 가진 복합변수 자료형을 선언한다.
+    type empTypes is record(
+        emp_id employees.employee_id%type,
+        emp_name varchar2(50),
+        emp_salary employees.salary%type,
+        emp_percent employees.commission_pct%type
+    );
+    --복합변수 자료형을 통해 변수를 생성한다.
+        rec2 empTypes;
+    --치환연산자를 통해 입력받은 값을 할당할 변수를 선언한다.
+    inputNum number(3);
+begin
+   select employee_id, first_name|| ' ' ||last_name, 
+   salary,nvl(commission_pct,0) into rec2
+from employees where employee_id=&inputNum;
+
+        dbms_output.put_line(rec2.emp_id|| ' ' ||
+                        rec2.emp_name|| ' ' ||
+                        rec2.emp_salary|| ' ' ||
+                        rec2.emp_percent);
+end;
+/
+
+
+/*
+바인드변수
+    : 호스트환경에서 선언된 변수로써 비 PL/SQL 변수이다.
+    호스트환경이란 PL/SQL의 블럭을 제외한 나머지 부분을 말한다.
+    콘솔(CMD)dptjsms SQL> 명령프롬프트가 있는 상태를 말한다.
+    
+    형식]
+        var 변수명 자료형;
+        혹은
+        variable 변수명 자료형;
+*/
+
+--예제6] 바인드변수
+set serveroutput on;
+--호스트 환경에서 바인드 변수 선언
+var return_var number;
+--PL/SQL 작성
+declare
+    --선언부에는 이와같이 아무 내용이 없을수도 있다.
+begin
+    --바인드변수는 일반변수와으 구분을 위해 :(콜론)을 추가해야 한다.
+    :return_var :=999;
+    dbms_output.put_line(:return_var);
+end;
+/
+/*호스트환경에서 바인드 변수를 출력할때는 print를 사용한다.*/
+print return_var;
+/* CMD에서는 문장을 개별적으로 실행해도 문제가 없지만, 디벨로퍼에서는 바인드 변수부터
+ 마지막 print문까지 블럭으로 지정한 수 실행해야 결과가 제대로 나오게 된다.*/
+
+
+
+
+
+
+
+--예제7] 제어문(조건문 : if)
+declare
+    num number;
+begin
+    num :=10;
+    
+    if mod(num,2) = 0 then
+        dbms_output.put_line(num
     
     
