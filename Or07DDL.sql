@@ -23,7 +23,7 @@ grant connect, resource to study;
 --모든 계정에 존재하는 논리적인 테이블. 쿼리 테스트시 주로 사용된다.
 select * from dual;
 
-/*해당 계정에 생성된 테이블으 목록을 저장한 시스템 테이블로
+/*해당 계정에 생성된 테이블의 목록을 저장한 시스템 테이블로
 이와같이 관리의 목적으로 생성된 테이블을 "데이터사전"이라고 표현한다.*/
 select * from tab;
 
@@ -47,6 +47,18 @@ create table tb_member (
 select * from tab;
 --테이블의 구조(스키마)확인.  컬럼명 , 자료형, 크기를 확인할 수 있다.
 desc tb_member;
+
+---------------------------------멀티채팅 테이블생성용---
+create table chat_talking (
+    일련번호 number(10) primary key,
+    대화명 varchar2(30),
+    대화내용 varchar2(400),
+    입력날짜 date default sysdate
+);
+
+
+
+
 
 
 /*

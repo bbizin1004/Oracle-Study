@@ -10,6 +10,16 @@ DCL: Data Control Language(데이터 제어어)
 해당 부분은 DBA권한이 있는 최고관리자(sys,system)으로 접속한 후 실행해야 한다.
 새로운 사용자 계정이 생성된 후 접속 및 쿼리실행 테스트는 CMD(명령프롬프트)에서 
 진행한다.
+
+create session
+접속할수 있는 권한
+
+create table
+테이블을 생성할 수 있는 권한 
+
+create user
+사용자 생성 권한
+
 */
 
 /*
@@ -119,6 +129,7 @@ select * from dba_users where username like upper('%test%');
 
 --계정을 삭제하면서 모든 물리적인 스키마까지 같이 삭제한다.
 drop user test_user1 cascade;
+drop user study계정 cascade;
 
 /*
 테이블 스페이스란?
