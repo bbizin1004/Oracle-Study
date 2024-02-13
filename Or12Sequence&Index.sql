@@ -122,17 +122,6 @@ drop index tb_goods_name_idx;
 
 --인덱스 수정은 불가능하다. 필요하다면 삭제후 다시 생성해야 한다.
 
-------------------------------------- 멀티채팅용 시퀀스
-create sequence chat_serial_num
-    increment by 1
-    start with 1
-    minvalue 1 /*증가치, 시작값, 최소값은 1로 지정*/
-    nomaxvalue
-    nocycle
-    nocache;
-
-
-insert into tb_goods values (chat_serial_num.nextval,'먹태깡1');
 
 
 

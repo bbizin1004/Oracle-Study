@@ -48,16 +48,6 @@ select * from tab;
 --테이블의 구조(스키마)확인.  컬럼명 , 자료형, 크기를 확인할 수 있다.
 desc tb_member;
 
----------------------------------멀티채팅 테이블생성용---
-create table chat_talking (
-    일련번호 number(10) primary key,
-    대화명 varchar2(30),
-    대화내용 varchar2(400),
-    입력날짜 date default sysdate
-);
-
-
-
 
 
 
