@@ -36,5 +36,5 @@ end;
 
 set serveroutput on;
 
-execute ChatingInsert('tester1','안녕? 반가워');
+execute ChatingInsert('tester1','머하고 지내?');
 select * from chat_talking;

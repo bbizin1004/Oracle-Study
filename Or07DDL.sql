@@ -113,6 +113,7 @@ drop table employees;
 desc employees;
 select * from tab;
 
+
 --테이블을 삭제(drop)하면 휴지통(recyclebin)에 임시 보관된다.
 show recyclebin;
 --휴지통 비우기
