@@ -186,3 +186,17 @@ select * from
 where rNUM between 21 and 30;
 --JSP 수업에서 게시판  Paging시 다시 돌아돈다.--
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

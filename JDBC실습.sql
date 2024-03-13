@@ -216,27 +216,230 @@ EXECUTE MyMemberAuth('dddd아이디틀림','0412',:member_auth);
 print member_auth;
 
 
+/************************
+JSP 웹 프로그래밍-
+**********************/
+
+alter session set "_ORACLE_SCRIPT"=true;
+
+--계정 생성
+create user musthave identified by 1234;
+
+--권한 부여
+grant connect, resource,unlimited tablespace to musthave;
+
+/*
+CMD환경에서 sqlplus를 통해 접속한 경우에는 다른 계정으로 전환시 아래와 같이
+conn (혹은 connent)명령어를 사용할 수 있다. 하지만 SQL디벨로퍼에서는
+사용할 수 없는 대신 우측 상단의 셀렉트박스를 통해 계정을 변경할 수 있다.
+*/
+conn musthave/1234;
+show user;
+
+--테이블 및 시퀀스 생성을 위해 musthave 계정 연결
+--기존에 생성된 테이블이 있다면 삭제 후 다시 만들 수 있다.
+drop table member;
+drop table board;
+drop sequence seq_board_num;
+
+--회원 테이블 생성
+create table member(
+    id varchar2(10) not null,
+    pass varchar2(10) not null,
+    name varchar2(30) not null,
+    regidate date default sysdate not null,
+    primary key(id)
+);
+
+--모델1 방식의 회원제 게시판 테이블 생성
+create table board(
+    num number primary key,
+    title varchar2(2000) not null,
+    content varchar2(2000) not null,
+    id varchar2(10) not null, /*회원제 게시판이므로 회원아이디 필요*/
+    postdate date default sysdate not null, /*게시물의 작성일*/
+    visitcount number(6) /* 게시물의 조회수 */
+    );
+
+--외래키 설정
+/*
+자식테이블인 board가 부모테이블인 member를 참조하는 외래키를 설정한다.
+board의 id컬럼이 member의 기본키인 id를 참조한다.
+*/
+alter table board
+    add constraint board_mem_fk foreign key(id)
+    references member(id);
+select * from user_cons_columns;    
+    
+--시퀀스 생성
+--board테이블에 중복되지 않는 일련번호 부여를 위해 사용
+create sequence seq_board_num
+    increment  by 1
+    start with 1
+    minvalue 1
+    nomaxvalue
+    nocycle
+    nocache;
+
+--더미 데이터 입력
+insert into member (id,pass,name) values('musthave', '1234','머스트해브');
+insert into board (num,title,content,id,postdate,visitcount)
+    values(seq_board_num.nextval,'제목1입니다','내용1입니다','musthave',
+    sysdate,0);
+
+insert into board (num,title,content,id,postdate,visitcount)
+    values(seq_board_num.nextval,'제목2입니다','내용2입니다','tjoeun',
+    sysdate,0);
+--커밋
+commit;
+
+
+/***********************
+모델1 방식의 회원제 게시판 제작하기.
+*********************/
+--더미데이터 추가입력
+insert into board values (seq_board_num.nextval, '지금은 봄입니다',
+    '봄의왈츠','musthave',sysdate,0);
+insert into board values (seq_board_num.nextval, '지금은 여름입니다',
+    '여름향기','musthave',sysdate,0);
+insert into board values (seq_board_num.nextval, '지금은 가을입니다',
+    '가을동화','musthave',sysdate,0);
+insert into board values (seq_board_num.nextval, '지금은 겨울입니다',
+    '겨울연가','musthave',sysdate,0);
+commit;
+
+--DAO의 selectCount() 메서드: board테이블의 게시물 갯수 카운트
+select count(*) from board;
+select count(*) from board where title like '%겨울%';
+select count(*) from board where content like '%겨울%';
+
+--selectList() 메서드 : 게시판 목록에 출력할 레코드를 정렬해서 인출
+select * from board order by num desc;
+select * from board where title like '%여름%' order by num desc;
+
+--insertWrite() 메서드: 글쓰기를 위해 insert쿼리를 실행
+insert into board (num,title, content,id,visitcount)
+    values (seq_board_num.nextval,'제목Test','내용Test','musthave',0);
+commit;
+
+--selectView () : 게시물의 일련번호를 통해 내용보기 구현
+select * from board where  num=6;
+--별칭을 부여하지 않아 테이블명을 그대로 사용한다.
+select * from board inner join member
+    on board.id=member.id
+where  num=6;
+--별칭을 부여해서 필요한 컬럼만 select 절에 기술한다.
+select B.*, M.name from board B inner join member M
+    on B.id=M.id
+where  num=6;
+
+
+--updageVisitCount() : 게시물 내용보기 시 조회수 1증가
+update board set visitcount=visitcount +1 where num =6;
+commit;
+
+--내용보기시 다른 사람이 작성한 게시물을 확인하기 위해 더미데이터 추가
+insert into member(id,pass,name) values
+    ('tjoeun','1234','더조은');
+commit;
+
+--updateEdit() : 기존의 게시물을 수정
+select * from board where num=7;
+update board set title= '수정Test', content = '내용수정 Test'
+    where num=7;
+
+--deletePost() : 게시물 삭제
+delete from board where num=6;
+select * from board;
+commit;
+
+
+--게시판의 Paging 기능 추가를 위한 서브쿼리문 작성
+--1.게시물을 작성한 순서의 내림차순으로 정렬
+select * from board order by num desc;
+--2.내림차순으로 정렬된 상태에서 rownum을 부여
+select tb.*, rownum rNum from
+    (select * from board order by num desc) tb;
+--3.목록으로 출력할 게시물의 구간을 정해서 인출.  한페이지당 10개씩.
+select *from(
+    select tb.*, rownum rNum from
+        (select * from board order by num desc) tb
+)
+where rNum>=1 and rNum<=10;
+
+--게시판의 검색기능의 구현을 위해 like를 사용
+select * from board where title like '%8%' order by num desc;
+
+--페이징 쿼리문 + 검색기능 쿼리문
+--검색기능은 가장 안쪽에 있는 서브쿼리에 추가하면 된다.
+select *from(
+    select tb.*, rownum rNum from
+        (select * from board  where title like '%8%' order by num desc) tb
+)
+where rNum between 1 and 10;
+--게시물으 구간은 비교연산자 혹은 between으로 작성할 수 있다.
 
 
 
+/***********************************************
+모델2(MVC패턴) 방식의 자료실형 게시판 제작하기
+***********************************************/
+
+/*
+비회원제 게시판이므로 id 대신 name, pass 컬럼이 추가된다.
+즉, 작성자의 이름과 수정, 삭제를 위한 패스워드 검증 로직 추가됨.
+자료실형으로 제작되므로 파일관련 컬럼이 추가된다
+Ofile: 
+sfile:
+downcount:
+*/
+create table mvcboard(
+    idx number primary key,
+    name varchar2(50) not null,
+    title varchar2(200) not null,
+    content varchar2(2000) not null,
+    postdate date default sysdate not null,
+    ofile varchar2(200),
+    sfile varchar2(30),
+    downcount number(5) default 0 not null,
+    pass varchar2(50) not null,
+    visitcount number default 0 not null
+);
+
+drop table mvcboard;
 
 
+--더미 데이터 입력
+insert into mvcboard (idx, name, title, content, pass)
+    values (seq_board_num.nextval, '김유신', '자료실 제목1 입니다.','내용','1234');
+insert into mvcboard (idx, name, title, content, pass)
+    values (seq_board_num.nextval, '장보고', '자료실 제목2 입니다.','내용','1234');
+insert into mvcboard (idx, name, title, content, pass)
+    values (seq_board_num.nextval, '이순신', '자료실 제목3 입니다.','내용','1234');
+insert into mvcboard (idx, name, title, content, pass)
+    values (seq_board_num.nextval, '강감찬', '자료실 제목4 입니다.','내용','1234');
+insert into mvcboard (idx, name, title, content, pass)
+    values (seq_board_num.nextval, '대조영', '자료실 제목5 입니다.','내용','1234');
 
+commit;
 
+    
+    
 
+-- 게시판 프로젝트 계정 만들기.
+alter session set "_ORACLE_SCRIPT"=true;
 
-
-
-
-
-
-
-
-
-
-
-
-
+create user Mas identified by 1234;
+    
+grant connect, resource,unlimited tablespace to Mas;
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 
