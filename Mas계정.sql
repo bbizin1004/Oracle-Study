@@ -12,7 +12,7 @@ create table member(
     id varchar2(10) not null,
     pass varchar2(15) not null,
     name varchar2(10) not null,
-    tel number not null,
+    tel varchar2(14) not null,
     email varchar2(40) not null,
     regidate date default sysdate not null,
     primary key(id)
@@ -20,6 +20,10 @@ create table member(
 
 --테이블 지울때
 drop table member;
+
+drop table freeboard;
+
+
 
 
 --모델1 방식의 회원제 게시판 테이블 생성
@@ -63,6 +67,7 @@ alter user mas quota 5m on users;
 insert into member (id,pass,name,tel,email) values('mas', '1234','마스','01033110789'
     ,'bbizin1004@korea.com');
     
+    select * from member;
 --데이터 지울때 
 delete from freeboard;
 
