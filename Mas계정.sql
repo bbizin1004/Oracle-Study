@@ -29,9 +29,9 @@ drop table freeboard;
 --모델1 방식의 회원제 게시판 테이블 생성
 create table freeboard(
     num number primary key,
-    title varchar2(2000) not null,
+    title varchar2(200) not null,
     content varchar2(2000) not null,
-    id varchar2(10) not null, /*회원제 게시판이므로 회원아이디 필요*/
+    id varchar2(15) not null, /*회원제 게시판이므로 회원아이디 필요*/
     postdate date default sysdate not null, /*게시물의 작성일*/
     visitcount number(6) /* 게시물의 조회수 */
     );
@@ -42,7 +42,7 @@ create table freeboard(
 board의 id컬럼이 member의 기본키인 id를 참조한다.
 */
 alter table freeboard
-    add constraint board_mem_fk foreign key(id)
+    add constraint freeboard_mem_fk foreign key(id)
     references member(id);
 select * from user_cons_columns;    
     
@@ -55,7 +55,7 @@ create sequence seq_board_num
     nomaxvalue
     nocycle
     nocache;
-    
+-- 시퀀스 삭제
 drop sequence seq_board_num;
 
     
@@ -63,20 +63,29 @@ drop sequence seq_board_num;
 select username,default_tablespace from dba_users where username in upper('Mas');
 alter user mas quota 5m on users;
 
---더미 데이터 입력
+--회원정보 더미 데이터 입력
 insert into member (id,pass,name,tel,email) values('mas', '1234','마스','01033110789'
     ,'bbizin1004@korea.com');
     
     select * from member;
+    
+--데이터 수정
+select * from member where id='bbizin';
+update member set id= 'bbizin',pass='1234', name = '안성현',
+        tel='0103435625', email='bbizin@korea.com'
+    where id='bbizin' and pass='12345';
+    
+    
 --데이터 지울때 
 delete from freeboard;
 
+--자유게시판 더미데이터 생성
 insert into freeboard (num,title,content,id,postdate,visitcount)
     values(seq_board_num.nextval,'제목 1입니다.','내용1입니다','mas',
     sysdate,0);
 
 insert into freeboard (num,title,content,id,postdate,visitcount)
-    values(seq_board_num.nextval,'제목2입니다','내용2입니다','tjoeun',
+    values(seq_board_num.nextval,'제목2입니다','내용2입니다','bbizin',
     sysdate,0);
 --커밋
 commit;
