@@ -81,11 +81,11 @@ delete from freeboard;
 
 --자유게시판 더미데이터 생성
 insert into freeboard (num,title,content,id,postdate,visitcount)
-    values(seq_board_num.nextval,'제목 1입니다.','내용1입니다','mas',
+    values(seq_board_num.nextval,'이제는 되라!','으아아아아','mas',
     sysdate,0);
 
 insert into freeboard (num,title,content,id,postdate,visitcount)
-    values(seq_board_num.nextval,'제목2입니다','내용2입니다','bbizin',
+    values(seq_board_num.nextval,'코딩코딩','으아아아아','bbizin',
     sysdate,0);
 --커밋
 commit;
